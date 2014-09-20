@@ -23,6 +23,20 @@ License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+### Binary distribution license
+
+The binary distribution of excel2csv includes following open source
+software.
+
+* [Apache POI] - the Java API for Microsoft Documents
+* [Open CSV] - a very simple csv (comma-separated values) parser
+  library for Java
+* [Apache Commons CLI] - API for parsing command line options passed to programs
+
+[Apache POI]: http://poi.apache.org
+[Open CSV]: http://opencsv.sourceforge.net
+[Apache Commons CLI]: http://commons.apache.org/proper/commons-cli/
+
 Install
 -------
 

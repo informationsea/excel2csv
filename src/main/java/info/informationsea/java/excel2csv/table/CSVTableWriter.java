@@ -66,5 +66,11 @@ public class CSVTableWriter implements TableWriter{
     public void close() throws IOException {
         m_writer.close();
     }
+
+	@Override
+	public void setSheetNameCandidate(String sheetNameCandidate,
+			boolean overwrite) {
+		// ignore
+	}
     
 }

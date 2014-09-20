@@ -34,4 +34,5 @@ public interface TableWriter {
     public abstract void open(String path) throws IOException;
     public abstract void writeRow(String[] row) throws IOException;
     public abstract void close() throws IOException;
+    public abstract void setSheetNameCandidate(String sheetNameCandidate, boolean overwrite);
 }

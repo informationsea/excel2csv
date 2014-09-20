@@ -18,6 +18,7 @@
 
 package info.informationsea.java.excel2csv.table;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -30,6 +31,7 @@ public class CSVTableReader implements TableReader {
 	private char m_delimiter = ',';
 	private char m_quoteChar = '"';
     private CSVReader m_reader = null;
+    private String m_path = null;
     
     public CSVTableReader() {
 		
@@ -46,6 +48,7 @@ public class CSVTableReader implements TableReader {
             open(new InputStreamReader(System.in));
         } else {
             open(new FileReader(path));
+            m_path = path;
         }
     }
     
@@ -71,5 +74,12 @@ public class CSVTableReader implements TableReader {
 	@Override
 	public void setSheetIndex(int sheetIndex) throws IllegalArgumentException {
 		// ignore
+	}
+
+	@Override
+	public String[] getSheetList() {
+		if (m_path == null)
+			return new String[]{"Sheet"};
+		return new String[]{new File(m_path).getName()};
 	}
 }

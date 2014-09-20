@@ -40,7 +40,7 @@ public interface TableReader {
      * @param sheetName
      * @throws IllegalArgumentException Not found
      */
-    public abstract void setSheetName(String sheetName) throws IllegalArgumentException;
+    public abstract void setSheetName(String sheetName) throws IllegalArgumentException, IOException;
     
     /**
      * Set sheet index to read.
@@ -48,7 +48,10 @@ public interface TableReader {
      * @param sheetIndex
      * @throws IllegalArgumentException Not found
      */
-    public abstract void setSheetIndex(int sheetIndex) throws IllegalArgumentException;
+    public abstract void setSheetIndex(int sheetIndex) throws IllegalArgumentException, IOException;
+    
+    public abstract String[] getSheetList() throws IOException;
+    
     public abstract String[] readRow() throws IOException;
     public abstract void close() throws IOException;
 }

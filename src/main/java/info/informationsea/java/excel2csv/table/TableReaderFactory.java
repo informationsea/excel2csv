@@ -51,17 +51,15 @@ public class TableReaderFactory {
                 reader = new XLSXTableReader();
                 break;
             default:
-                reader = new TabTableReader();
-                break;
+            	reader = new TabTableReader();
+            	break;
         }
-        
-        try {
-            if (sheetIndex >= 0)
-                ((ExcelTableReaderBase)reader).setSheetIndex(sheetIndex);
-            if (sheetName != null)
-                ((ExcelTableReaderBase)reader).setSheetName(sheetName);
-        } catch (ClassCastException cce) {} // ignore exception
-        
+
+        if (sheetIndex >= 0)
+        	reader.setSheetIndex(sheetIndex);
+        if (sheetName != null)
+        	reader.setSheetName(sheetName);
+
         reader.open(path);
         return reader;
     }

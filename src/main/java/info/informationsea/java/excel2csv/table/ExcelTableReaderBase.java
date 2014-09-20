@@ -22,6 +22,7 @@ package info.informationsea.java.excel2csv.table;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -41,15 +42,15 @@ public abstract class ExcelTableReaderBase implements TableReader {
     private String m_sheetName = null;
     
     public void setSheetName(String sheetName) {
-        if (m_workbook != null)
-            throw new IllegalStateException("Call setSheetName before open");
         m_sheetName = sheetName;
+        if (m_workbook != null)
+        	m_sheet = m_workbook.getSheet(sheetName);
     }
     
     public void setSheetIndex(int sheetIndex) {
-        if (m_workbook != null)
-            throw new IllegalStateException("Call setSheetIndex before open");
-        m_sheetIndex = sheetIndex;
+    	m_sheetIndex = sheetIndex;
+    	if (m_workbook != null)
+    		m_sheet = m_workbook.getSheetAt(sheetIndex);
     }
     
     public void open(Workbook workbook) throws IOException {
@@ -108,5 +109,14 @@ public abstract class ExcelTableReaderBase implements TableReader {
     public void close() throws IOException {
         // nothing to do
     }
+
+	@Override
+	public String[] getSheetList() {
+		String[] sheetList = new String[m_workbook.getNumberOfSheets()];
+		for (int i = 0; i < sheetList.length; i++) {
+			sheetList[i] = m_workbook.getSheetName(i);
+		}
+		return sheetList;
+	}
     
 }

@@ -40,16 +40,16 @@ public class TableWriterFactory {
                 break;
             case FILETYPE_XLS:
                 writer = new XLSTableWriter();
-                ((XLSTableWriter)writer).setSheetNameCandidate(sheetNameCandidate, overwriteSheet);
                 break;
             case FILETYPE_XLSX:
                 writer = new XLSXTableWriter();
-                ((XLSXTableWriter)writer).setSheetNameCandidate(sheetNameCandidate, overwriteSheet);
                 break;
             default:
                 writer = new TabTableWriter();
                 break;
         }
+        
+        writer.setSheetNameCandidate(sheetNameCandidate, overwriteSheet);
         writer.open(path);
         return writer;
     }

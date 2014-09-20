@@ -18,36 +18,58 @@
 
 package info.informationsea.java.excel2csv.table;
 
-import au.com.bytecode.opencsv.CSVReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 
-/**
- *
- * @author yasu
- */
+import au.com.bytecode.opencsv.CSVReader;
+
 public class CSVTableReader implements TableReader {
-    
+
+	private char m_delimiter = ',';
+	private char m_quoteChar = '"';
     private CSVReader m_reader = null;
+    
+    public CSVTableReader() {
+		
+	}
+    
+    public CSVTableReader(char delimiter, char quoteChar) {
+		m_delimiter = delimiter;
+		m_quoteChar = quoteChar;
+	}
+    
+    @Override
+    public void open(String path) throws IOException {
+        if (path == null) {
+            open(new InputStreamReader(System.in));
+        } else {
+            open(new FileReader(path));
+        }
+    }
+    
+    public void open(Reader reader) {
+    	m_reader = new CSVReader(reader, m_delimiter, m_quoteChar);
+    }
 
     @Override
     public String[] readRow() throws IOException {
         return m_reader.readNext();
     }
-
-    @Override
-    public void open(String path) throws IOException {
-        if (path == null) {
-            m_reader = new CSVReader(new InputStreamReader(System.in));
-        } else {
-            m_reader = new CSVReader(new FileReader(path));
-        }
-    }
-
+    
     @Override
     public void close() throws IOException {
         m_reader.close();
     }
-    
+
+	@Override
+	public void setSheetName(String sheetName) throws IllegalArgumentException {
+		// ignore
+	}
+
+	@Override
+	public void setSheetIndex(int sheetIndex) throws IllegalArgumentException {
+		// ignore
+	}
 }

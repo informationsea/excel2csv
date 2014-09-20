@@ -33,6 +33,22 @@ public interface TableReader {
      * @throws IOException
      */
     public abstract void open(String path) throws IOException;
+    
+    /**
+     * Set sheet name to read.
+     * If sheet is not support, just ignore
+     * @param sheetName
+     * @throws IllegalArgumentException Not found
+     */
+    public abstract void setSheetName(String sheetName) throws IllegalArgumentException;
+    
+    /**
+     * Set sheet index to read.
+     * If sheet is not support, just ignore
+     * @param sheetIndex
+     * @throws IllegalArgumentException Not found
+     */
+    public abstract void setSheetIndex(int sheetIndex) throws IllegalArgumentException;
     public abstract String[] readRow() throws IOException;
     public abstract void close() throws IOException;
 }

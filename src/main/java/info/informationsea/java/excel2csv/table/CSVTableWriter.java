@@ -19,9 +19,11 @@
 package info.informationsea.java.excel2csv.table;
 
 import au.com.bytecode.opencsv.CSVWriter;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 /**
  *
@@ -30,14 +32,29 @@ import java.io.OutputStreamWriter;
 public class CSVTableWriter implements TableWriter{
     
     private CSVWriter m_writer = null;
+	private char m_delimiter = ',';
+	private char m_quoteChar = '"';
+	
+	public CSVTableWriter() {
+		
+	}
+
+	public CSVTableWriter(char delimiter, char quoteChar) {
+		m_delimiter = delimiter;
+		m_quoteChar = quoteChar;
+	}
 
     @Override
     public void open(String path) throws IOException {
         if (path == null) {
-            m_writer = new CSVWriter(new OutputStreamWriter(System.out));
+            open(new OutputStreamWriter(System.out));
         } else {
-            m_writer = new CSVWriter(new FileWriter(path));
+            open(new FileWriter(path));
         }
+    }
+    
+    public void open(Writer writer) throws IOException {
+    	m_writer = new CSVWriter(writer, m_delimiter, m_quoteChar);
     }
 
     @Override

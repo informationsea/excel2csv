@@ -1,6 +1,8 @@
 #!/bin/bash
 
-export JAVA_HOME=/Library/Internet\ Plug-Ins/JavaAppletPlugin.plugin/Contents/Home
-export PATH=/Library/Internet\ Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin:$PATH
+if [ -d /Library/Internet\ Plug-Ins/JavaAppletPlugin.plugin/Contents/Home ]; then
+    export JAVA_HOME=/Library/Internet\ Plug-Ins/JavaAppletPlugin.plugin/Contents/Home
+    export PATH=/Library/Internet\ Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin:$PATH
+fi
 
 java -jar ${BASH_SOURCE%/*}/../lib/excel2csv.jar "$@"

@@ -41,8 +41,13 @@ public abstract class ExcelTableWriterBase  implements TableWriter{
 
     @Override
     public void close() throws IOException {
-        try (FileOutputStream fos = new FileOutputStream(m_path)) {
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(m_path);
             m_workbook.write(fos);
+        } finally {
+            if (fos != null)
+                fos.close();
         }
     }
     

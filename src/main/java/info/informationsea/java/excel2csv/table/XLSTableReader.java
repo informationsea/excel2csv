@@ -29,11 +29,16 @@ import org.apache.poi.ss.usermodel.Workbook;
  */
 public class XLSTableReader extends ExcelTableReaderBase{
 
-   @Override
+    @Override
     public void open(String path) throws IOException {
-        try (FileInputStream fis = new FileInputStream(path)) {
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(path);
             Workbook workbook = new HSSFWorkbook(fis);
             open(workbook);
+        } finally {
+            if (fis != null)
+                fis.close();
         }
     }
 }

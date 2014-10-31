@@ -30,10 +30,15 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class XLSXTableReader extends ExcelTableReaderBase{
 
    @Override
-    public void open(String path) throws IOException {
-        try (FileInputStream fis = new FileInputStream(path)) {
-            Workbook workbook = new XSSFWorkbook(fis);
-            open(workbook);
-        }
-    }
+   public void open(String path) throws IOException {
+       FileInputStream fis = null;
+       try {
+           fis = new FileInputStream(path);
+           Workbook workbook = new XSSFWorkbook(fis);
+           open(workbook);
+       } finally {
+           if (fis != null)
+               fis.close();
+       }
+   }
 }

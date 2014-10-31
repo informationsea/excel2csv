@@ -71,7 +71,7 @@ public abstract class ExcelTableReaderBase implements TableReader {
             return null;
         }
         
-        ArrayList<String> rowList = new ArrayList<>();
+        ArrayList<String> rowList = new ArrayList<String>();
         Row row = m_rowIterator.next();
         
         for (Iterator<Cell> cell_iterator = row.cellIterator(); cell_iterator.hasNext();) {

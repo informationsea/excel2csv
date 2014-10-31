@@ -35,8 +35,13 @@ public class XLSTableWriter extends ExcelTableWriterBase{
         File file = new File(path);
         Workbook workbook;
         if (file.isFile()) {
-            try (FileInputStream fis = new FileInputStream(path)) {
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(path);
                 workbook = new HSSFWorkbook(fis);
+            } finally {
+                if (fis != null)
+                    fis.close();
             }
         } else {
             workbook = new HSSFWorkbook();

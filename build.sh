@@ -1,7 +1,7 @@
 #!/bin/sh
 
-if [ -d /Library/Java/JavaVirtualMachines/jdk1.7.0_67.jdk/Contents/Home ];then
-    export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_67.jdk/Contents/Home
+if [ -d /Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home ];then
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home
 fi
 
 mvn3 clean

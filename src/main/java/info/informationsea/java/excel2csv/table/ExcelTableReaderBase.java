@@ -84,9 +84,16 @@ public abstract class ExcelTableReaderBase implements TableReader {
                 case Cell.CELL_TYPE_BOOLEAN:
                     rowList.add(Boolean.toString(cell.getBooleanCellValue()));
                     break;
-                case Cell.CELL_TYPE_NUMERIC:
-                    rowList.add(Double.toString(cell.getNumericCellValue()));
+                case Cell.CELL_TYPE_NUMERIC: {
+                    double value = cell.getNumericCellValue();
+                    if (value == ((int)value)) {
+                        rowList.add(Integer.toString((int)value));
+                    } else {
+                        rowList.add(Double.toString(value));
+                    }
+
                     break;
+                }
                 case Cell.CELL_TYPE_STRING:
                     rowList.add(cell.getStringCellValue());
                     break;

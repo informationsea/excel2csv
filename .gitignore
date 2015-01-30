@@ -7,6 +7,8 @@ pom.xml.versionsBackup
 pom.xml.next
 release.properties
 
+build/
+
 # Java
 *.class
 
@@ -14,7 +16,6 @@ release.properties
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.ear
 
@@ -117,6 +118,7 @@ local.properties
 ## File-based project format:
 *.ipr
 *.iws
+*.iml
 
 ## Plugin-specific files:
 

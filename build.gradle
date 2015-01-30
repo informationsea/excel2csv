@@ -1,11 +1,15 @@
+plugins {
+  id "us.kirchmeier.capsule" version "0.10.0"
+}
+
 apply plugin: 'java'
 apply plugin: 'maven'
-apply plugin: 'application'
+//apply plugin: 'application'
 
 group = 'info.informationsea.excel2csv'
 version = '0.1.3'
 
-mainClassName = 'info.informationsea.java.excel2csv.Main'
+//mainClassName = 'info.informationsea.java.excel2csv.Main'
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
@@ -20,4 +24,19 @@ dependencies {
     compile group: 'org.apache.poi', name: 'poi-scratchpad', version:'3.10.1'
     compile group: 'net.sf.opencsv', name: 'opencsv', version:'2.3'
     compile group: 'commons-cli', name: 'commons-cli', version:'1.2'
+}
+
+task fatCapsule(type: FatCapsule) {
+    applicationClass 'info.informationsea.java.excel2csv.Main'
+}
+
+task executableCapsule(type:FatCapsule){
+    applicationClass 'info.informationsea.java.excel2csv.Main'
+    reallyExecutable
+    archiveName = "excel2csv"
+}
+
+task distUnix(dependsOn: executableCapsule, type: Tar) {
+    from "$buildDir/libs/excel2csv"
+    from "$projectDir/README.md"
 }

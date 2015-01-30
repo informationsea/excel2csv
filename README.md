@@ -41,8 +41,8 @@ software. They are licensed by Apache License.
 Install
 -------
 
-1. Copy bin/excel2csv to /usr/local/bin
-2. Copy lib/excel2csv.jar to /usr/local/lib
+1. Copy excel2csv to some where
+2. Add PATH
 
 Usage
 -----
@@ -78,7 +78,7 @@ How to build
 
     git clone https://github.com/informationsea/excel2csv.git
     cd excel2csv
-    ./build.sh
+    ./gradlew clean distUnix
 
 
 

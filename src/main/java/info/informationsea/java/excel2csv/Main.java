@@ -18,107 +18,90 @@
 
 package info.informationsea.java.excel2csv;
 
-import info.informationsea.java.excel2csv.table.TabTableReader;
-import info.informationsea.java.excel2csv.table.TabTableWriter;
-import info.informationsea.java.excel2csv.table.TableReader;
-import info.informationsea.java.excel2csv.table.TableReaderFactory;
-import info.informationsea.java.excel2csv.table.TableWriter;
-import info.informationsea.java.excel2csv.table.TableWriterFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
+
+import info.informationsea.tableio.TableReader;
+import info.informationsea.tableio.TableRecord;
+import info.informationsea.tableio.TableWriter;
+import lombok.extern.slf4j.Slf4j;
+import org.kohsuke.args4j.Argument;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
 
 
-/**
- *
- * @author yasu
- */
+@Slf4j
 public class Main {
+
+    @Option(name = "-s", metaVar = "SHEET", usage = "Sheet name of input file (xls/xlsx only)")
+    String optionSheetName = null;
+
+    @Option(name = "-i", metaVar = "INDEX", usage = "Sheet index of input file (xls/xlsx only / default: 0 / start from 0)")
+    int optionSheetIndex = 0;
+
+    @Option(name = "-S", metaVar = "SHEET", usage = "Sheet name candidate of output file (xls/xlsx only)")
+    String optionOutputSheetName = null;
+
+    @Option(name = "-F", usage = "Overwrite sheet if exists")
+    boolean optionOverwrite = false;
+
+    @Option(name = "-h", usage = "Show help")
+    boolean optionHelp = false;
+
+    @Option(name = "-p", usage = "Disable pretty table (xls/xlsx only)")
+    boolean optionDisablePretty = false;
+
+    @Argument
+    private List<String> arguments = new ArrayList<String>();
+
     public static void main(String[] argv) {
-        Options options = new Options();
-        options.addOption("a", false, "file type of input file will detect automatically (default)");
-        options.addOption("A", false, "file type of output file will detect automatically (default)");
-        options.addOption("s", true, "Sheet name of input file (xls/xlsx only)");
-        options.addOption("i", true, "Sheet index of input file (xls/xlsx only / default: 0)");
-        options.addOption("S", true, "Sheet name candidate of output file (xls/xlsx only)");
-        options.addOption("F", false, "Overwrite sheet if exists");
-        
-        options.addOption("h", false, "show help");
-        CommandLineParser parser = new PosixParser();
-        CommandLine cmd;
+        new Main().run(argv);
+    }
+
+
+    public void run(String[] argv) {
+        CmdLineParser cmdLineParser = new CmdLineParser(this);
         try {
-            cmd = parser.parse(options, argv);
-        } catch (ParseException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            cmdLineParser.parseArgument(argv);
+        } catch (CmdLineException e) {
+            System.err.println(e.getLocalizedMessage());
+            optionHelp = true;
+        }
+
+        if (optionHelp) {
+            System.err.println("excel2csv [options] [INPUT [OUTPUT]]");
+            cmdLineParser.printUsage(System.err);
             return;
         }
-        
-        if (cmd.hasOption("h")) {
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("excel2csv [options] [INPUT] [OUTPUT]", options);
-            return;
-        }
-        
-        String[] fileArgv = cmd.getArgs();
-        String inputFile = fileArgv.length >= 1 ? fileArgv[0] : null;
-        String outputFile = fileArgv.length >= 2 ? fileArgv[1] : null;
-        
-        String inputSheetName = cmd.getOptionValue("s", null);
-        int inputSheetIndex = Integer.parseInt(cmd.getOptionValue("i", "-1"));
-        String outputSheetName = cmd.getOptionValue("S", null);
-        boolean overwriteSheet = cmd.hasOption("F");
-        
-        if (outputSheetName == null) {
+
+        String inputFile = arguments.size() >= 1 ? arguments.get(0) : null;
+        String outputFile = arguments.size() >= 2 ? arguments.get(1) : null;
+
+        if (optionOutputSheetName == null) {
             if (inputFile != null && !inputFile.equals("-")) {
-                outputSheetName = new File(inputFile).getName();
+                optionOutputSheetName = new File(inputFile).getName();
             } else {
-                outputSheetName = "Sheet";
+                optionOutputSheetName = "Sheet";
             }
         }
         
         // END OF PARSING OPTIONS
         
-        try {
-            TableReader reader;
-            TableWriter writer;
-            if (inputFile != null && !inputFile.equals("-")) {
-                if (inputSheetName != null)
-                    reader = TableReaderFactory.openReader(inputFile, inputSheetName);
-                else if (inputSheetIndex >= 0)
-                    reader = TableReaderFactory.openReader(inputFile, inputSheetIndex);
-                else
-                    reader = TableReaderFactory.openReader(inputFile);
-            } else {
-                reader = new TabTableReader();
-                ((TabTableReader)reader).open(new InputStreamReader(System.in));
+        try (TableReader reader = Utilities.openReader(inputFile, optionSheetIndex, optionSheetName)) {
+            try (TableWriter writer = new FilteredWriter(Utilities.openWriter(outputFile, optionOutputSheetName, optionOverwrite, optionDisablePretty))) {
+                for (TableRecord record : reader) {
+                    writer.printRecord(record.getContent());
+                }
             }
-            
-            if (outputFile != null && !outputFile.equals("-")) {
-                writer = TableWriterFactory.openWriter(outputFile, outputSheetName, overwriteSheet);
-            } else {
-                writer = new TabTableWriter();
-                ((TabTableWriter)writer).open(new OutputStreamWriter(System.out));
-            }
-            
-            String[] row;
-            while ((row = reader.readRow()) != null) {
-                //System.err.printf("Write row: %s\n", row);
-                writer.writeRow(row);
-            }
-            
-            reader.close();
-            writer.close();
-        } catch (IOException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            log.error("Error on writing {}", ex);
         }
     }
 

@@ -1,6 +1,8 @@
 excel2csv
 =========
 
+[![Build Status](https://travis-ci.org/informationsea/excel2csv.svg)](https://travis-ci.org/informationsea/excel2csv)
+
 xls/xlsx/csv/tsv converter
 
 License
@@ -26,16 +28,23 @@ License
 ### Binary distribution license
 
 The binary distribution of excel2csv includes following open source
-software. They are licensed by Apache License.
+software. They are licensed by Apache License or GPL3.
 
 * [Apache POI] - the Java API for Microsoft Documents
 * [Open CSV] - a very simple csv (comma-separated values) parser
   library for Java
+* [Table IO] - Uniformed Table Reader and Writer for CSV, TSV and Excel Files
 * [Apache Commons CLI] - API for parsing command line options passed to programs
 
 [Apache POI]: http://poi.apache.org
 [Open CSV]: http://opencsv.sourceforge.net
+[Table IO]: https://github.com/informationsea/tableio
 [Apache Commons CLI]: http://commons.apache.org/proper/commons-cli/
+
+Requirements
+------------
+
+* Java 7 or later
 
 
 Install
@@ -78,7 +87,4 @@ How to build
 
     git clone https://github.com/informationsea/excel2csv.git
     cd excel2csv
-    ./gradlew clean distUnix
-
-
-
+    ./gradlew clean distUnix installDist

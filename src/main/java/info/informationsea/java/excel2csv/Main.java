@@ -18,45 +18,44 @@
 
 package info.informationsea.java.excel2csv;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import info.informationsea.tableio.TableReader;
-import info.informationsea.tableio.TableRecord;
-import info.informationsea.tableio.TableWriter;
+import info.informationsea.java.excel2csv.gui.Application;
 import lombok.extern.slf4j.Slf4j;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Slf4j
 public class Main {
 
+    @Option(name = "-a", usage = "Copy all sheets in input excel file")
+    private boolean optionCopyAllSheets = false;
+
     @Option(name = "-s", metaVar = "SHEET", usage = "Sheet name of input file (xls/xlsx only)")
-    String optionSheetName = null;
+    private String optionSheetName = null;
 
     @Option(name = "-i", metaVar = "INDEX", usage = "Sheet index of input file (xls/xlsx only / default: 0 / start from 0)")
-    int optionSheetIndex = 0;
+    private int optionSheetIndex = 0;
 
     @Option(name = "-S", metaVar = "SHEET", usage = "Sheet name candidate of output file (xls/xlsx only)")
-    String optionOutputSheetName = null;
+    private String optionOutputSheetName = null;
 
     @Option(name = "-F", usage = "Overwrite sheet if exists")
-    boolean optionOverwrite = false;
+    private boolean optionOverwrite = false;
 
     @Option(name = "-h", usage = "Show help")
-    boolean optionHelp = false;
+    private boolean optionHelp = false;
 
-    @Option(name = "-p", usage = "Disable pretty table (xls/xlsx only)")
-    boolean optionDisablePretty = false;
+    @Option(name = "-p", usage = "Disable pretty table (xls/xlsx output only)")
+    private boolean optionDisablePretty = false;
+
+    @Option(name = "-c", usage = "Disable cell types conversion automatically")
+    private boolean optionDisableConvertCell = false;
 
     @Argument
     private List<String> arguments = new ArrayList<String>();
@@ -64,7 +63,6 @@ public class Main {
     public static void main(String[] argv) {
         new Main().run(argv);
     }
-
 
     public void run(String[] argv) {
         CmdLineParser cmdLineParser = new CmdLineParser(this);
@@ -75,34 +73,43 @@ public class Main {
             optionHelp = true;
         }
 
-        if (optionHelp) {
-            System.err.println("excel2csv [options] [INPUT [OUTPUT]]");
+        if (optionHelp || arguments.size() == 1) {
+            System.err.println("excel2csv [options] INPUT... OUTPUT");
             cmdLineParser.printUsage(System.err);
             return;
         }
 
-        String inputFile = arguments.size() >= 1 ? arguments.get(0) : null;
-        String outputFile = arguments.size() >= 2 ? arguments.get(1) : null;
+        if (arguments.size() == 0) {
+            Application.launch(Application.class);
+            return;
+        }
 
         if (optionOutputSheetName == null) {
-            if (inputFile != null && !inputFile.equals("-")) {
-                optionOutputSheetName = new File(inputFile).getName();
+            if (arguments.size() == 2 && !arguments.get(0).equals("-")) {
+                optionOutputSheetName = new File(arguments.get(0)).getName();
             } else {
                 optionOutputSheetName = "Sheet";
             }
         }
         
         // END OF PARSING OPTIONS
-        
-        try (TableReader reader = Utilities.openReader(inputFile, optionSheetIndex, optionSheetName)) {
-            try (TableWriter writer = new FilteredWriter(Utilities.openWriter(outputFile, optionOutputSheetName, optionOverwrite, optionDisablePretty))) {
-                for (TableRecord record : reader) {
-                    writer.printRecord(record.getContent());
-                }
-            }
-        } catch (Exception ex) {
-            log.error("Error on writing {}", ex);
+        List<File> inputFiles = new ArrayList<>();
+        for (String one : arguments.subList(0, arguments.size()-1)) {
+            inputFiles.add(new File(one));
+        }
+        File outputFile = new File(arguments.get(arguments.size()-1));
+
+        try {
+            Converter.builder().
+                    convertCellTypes(!optionDisableConvertCell).
+                    copyAllSheets(optionCopyAllSheets).
+                    inputSheetIndex(optionSheetIndex).
+                    inputSheetName(optionSheetName).
+                    outputSheetName(optionOutputSheetName).
+                    overwriteSheet(optionOverwrite).
+                    prettyTable(!optionDisablePretty).build().doConvert(inputFiles, outputFile);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-
 }

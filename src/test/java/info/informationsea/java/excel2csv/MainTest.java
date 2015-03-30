@@ -1,3 +1,21 @@
+/*
+ *  excel2csv  xls/xlsx/csv/tsv converter
+ *  Copyright (C) 2015 Yasunobu OKAMURA
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package info.informationsea.java.excel2csv;
 
 import info.informationsea.tableio.TableReader;
@@ -6,15 +24,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 @Slf4j
 public class MainTest {
@@ -54,9 +73,7 @@ public class MainTest {
 
     @AfterClass
     public static void teardownClass() throws Exception {
-        for (Path one : sampleInput) {
-            Files.deleteIfExists(one);
-        }
+        Utilities.deleteDirectoryRecursive(sampleDirectory);
     }
 
     @Test
@@ -72,7 +89,7 @@ public class MainTest {
                 Path outputFile = Files.createTempFile("outputTest", "."+suffix2);
                 log.info("input: {}  / output: {}", input.getFileName().toString(), outputFile.getFileName().toString());
                 new Main().run(new String[]{input.toString(), outputFile.toString()});
-                try (TableReader tableReader = Utilities.openReader(outputFile.toString(), 0, null)) {
+                try (TableReader tableReader = Utilities.openReader(outputFile.toFile(), 0, null)) {
                     assertObjects(expectedData, tableReader.readAll());
                 }
             }
@@ -94,20 +111,20 @@ public class MainTest {
         }
 
         for (int i = 0; i < 3; i++) {
-            try (TableReader tableReader = Utilities.openReader(outputFile.toString(), i, null)) {
+            try (TableReader tableReader = Utilities.openReader(outputFile.toFile(), i, null)) {
                 assertObjects(expectedData, tableReader.readAll());
             }
         }
 
-        try (TableReader tableReader = Utilities.openReader(outputFile.toString(), 10, sampleInput[0].getFileName().toString())) {
+        try (TableReader tableReader = Utilities.openReader(outputFile.toFile(), 10, sampleInput[0].getFileName().toString())) {
             assertObjects(expectedData, tableReader.readAll());
         }
 
-        try (TableReader tableReader = Utilities.openReader(outputFile.toString(), 10, sampleInput[1].getFileName().toString())) {
+        try (TableReader tableReader = Utilities.openReader(outputFile.toFile(), 10, sampleInput[1].getFileName().toString())) {
             assertObjects(expectedData, tableReader.readAll());
         }
 
-        try (TableReader tableReader = Utilities.openReader(outputFile.toString(), 10, sampleInput[0].getFileName().toString()+"-1")) {
+        try (TableReader tableReader = Utilities.openReader(outputFile.toFile(), 10, sampleInput[0].getFileName().toString()+"-1")) {
             assertObjects(expectedData, tableReader.readAll());
         }
     }
@@ -116,12 +133,12 @@ public class MainTest {
     public void testNamedSheet() throws Exception {
         Path outputFile = Files.createTempFile("outputTest", ".xlsx");
         new Main().run(new String[]{"-S", "OK", sampleInput[0].toString(), outputFile.toString()});
-        try (TableReader tableReader = Utilities.openReader(outputFile.toString(), 100, "OK")) {
+        try (TableReader tableReader = Utilities.openReader(outputFile.toFile(), 100, "OK")) {
             assertObjects(expectedData, tableReader.readAll());
         }
     }
 
-    private void assertObjects(List<Object[]> obj1, List<Object[]> obj2) {
+    public static void assertObjects(List<Object[]> obj1, List<Object[]> obj2) {
         Assert.assertEquals(obj1.size(), obj2.size());
 
         for (int i = 0; i < obj1.size(); i++) {

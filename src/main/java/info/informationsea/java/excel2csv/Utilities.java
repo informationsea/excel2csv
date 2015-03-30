@@ -19,6 +19,7 @@
 package info.informationsea.java.excel2csv;
 
 import info.informationsea.tableio.TableReader;
+import info.informationsea.tableio.TableRecord;
 import info.informationsea.tableio.TableWriter;
 import info.informationsea.tableio.csv.TableCSVReader;
 import info.informationsea.tableio.csv.TableCSVWriter;
@@ -34,6 +35,11 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 
 /**
  *
@@ -41,25 +47,25 @@ import java.io.*;
  */
 @Slf4j
 public class Utilities {
-    public enum FileType {FILETYPE_XLSX, FILETYPE_XLS, FILETYPE_CSV, FILETYPE_TAB};
+    public enum FileType {FILETYPE_XLSX, FILETYPE_XLS, FILETYPE_CSV, FILETYPE_TAB, FILETYPE_UNKNOWN};
     
     public static FileType suggestFileTypeFromName(String name) {
-        if (name.endsWith(".xls")) {
+        if (name.endsWith(".xls"))
             return FileType.FILETYPE_XLS;
-        } else if (name.endsWith(".xlsx")) {
+        if (name.endsWith(".xlsx"))
             return FileType.FILETYPE_XLSX;
-        } else if (name.endsWith(".csv")) {
+        if (name.endsWith(".csv"))
             return FileType.FILETYPE_CSV;
-        } else {
+        if (name.endsWith(".txt") || name.endsWith(".tsv"))
             return FileType.FILETYPE_TAB;
-        }
+        return FileType.FILETYPE_UNKNOWN;
     }
 
-    public static TableReader openReader(String inputFile, int sheetIndex, String sheetName) throws IOException {
+    public static TableReader openReader(File inputFile, int sheetIndex, String sheetName) throws IOException {
         if (inputFile == null) {
             return new TableCSVReader(new InputStreamReader(System.in), new TabDelimitedFormat());
         } else {
-            FileType type = suggestFileTypeFromName(inputFile);
+            FileType type = suggestFileTypeFromName(inputFile.getName());
             switch (type) {
                 case FILETYPE_XLS:
                 case FILETYPE_XLSX: {
@@ -81,17 +87,16 @@ public class Utilities {
         }
     }
 
-    public static TableWriter openWriter(String outputFile, String sheetName, boolean overWrite, boolean disablePretty) throws IOException {
+    public static TableWriter openWriter(final File outputFile, String sheetName, boolean overWrite, boolean disablePretty) throws IOException {
         if (outputFile == null) {
             return new TableCSVWriter(new OutputStreamWriter(System.out), new TabDelimitedFormat());
         } else {
-            FileType type = suggestFileTypeFromName(outputFile);
+            FileType type = suggestFileTypeFromName(outputFile.getName());
             switch (type) {
                 case FILETYPE_XLS:
                 case FILETYPE_XLSX: {
                     final Workbook workbook;
-                    final File outputFileObj = new File(outputFile);
-                    if (outputFileObj.exists() && outputFileObj.length() > 512) {
+                    if (outputFile.exists() && outputFile.length() > 512) {
                         if (type == FileType.FILETYPE_XLSX)
                             workbook = new XSSFWorkbook(new FileInputStream(outputFile));
                         else workbook = new HSSFWorkbook(new FileInputStream(outputFile));
@@ -101,41 +106,23 @@ public class Utilities {
                         else workbook = new HSSFWorkbook();
                     }
 
-                    Sheet sheet;
-                    if (overWrite) {
-                        int sheetIndex = workbook.getSheetIndex(sheetName);
-                        if (sheetIndex >= 0)
-                            workbook.removeSheetAt(sheetIndex);
-                        sheet = workbook.createSheet(sheetName);
-                    } else {
-                        String realSheetName = sheetName;
-                        int index = 1;
-                        while (true) {
-                            try {
-                                sheet = workbook.createSheet(realSheetName);
-                                break;
-                            } catch (IllegalArgumentException e) {
-                                realSheetName = sheetName + "-" + index++;
-                                if (index > 20) {
-                                    throw e;
-                                }
-                            }
-                        }
-                        log.info("new name {}", realSheetName);
-
-                    }
+                    Sheet sheet = createUniqueNameSheetForWorkbook(workbook, sheetName, overWrite);
                     final ExcelSheetWriter excelSheetWriter = new ExcelSheetWriter(sheet);
                     excelSheetWriter.setPrettyTable(!disablePretty);
                     return new AbstractTableWriter() {
                         @Override
                         public void printRecord(Object... values) throws Exception {
+                            for (int i = 0; i < values.length; i++) {
+                                if (values[i] == null)
+                                    values[i] = "";
+                            }
                             excelSheetWriter.printRecord(values);
                         }
 
                         @Override
                         public void close() throws Exception {
                             excelSheetWriter.close();
-                            try (OutputStream os = new FileOutputStream(outputFileObj)) {
+                            try (OutputStream os = new FileOutputStream(outputFile)) {
                                 workbook.write(os);
                             }
                         }
@@ -148,5 +135,63 @@ public class Utilities {
                     return new TableCSVWriter(new FileWriter(outputFile), new TabDelimitedFormat());
             }
         }
+    }
+
+    public static Sheet createUniqueNameSheetForWorkbook(Workbook workbook, String sheetName, boolean overwrite) {
+        if (overwrite) {
+            int index = workbook.getSheetIndex(workbook.getSheet(sheetName));
+            if (index >= 0) workbook.removeSheetAt(index);
+            return workbook.createSheet(sheetName);
+        }
+
+        String realSheetName = sheetName;
+        int index = 1;
+        Sheet sheet;
+        while (true) {
+            try {
+                sheet = workbook.createSheet(realSheetName);
+                break;
+            } catch (IllegalArgumentException e) {
+                realSheetName = sheetName + "-" + index++;
+                if (index > 20) {
+                    throw e;
+                }
+            }
+        }
+        return sheet;
+    }
+
+    public static void copyTable(TableReader reader, TableWriter writer) throws Exception {
+        for (TableRecord record : reader) {
+            writer.printRecord(record.getContent());
+        }
+    }
+
+    public static void deleteDirectoryRecursive(Path dir) throws IOException {
+        Files.walkFileTree(dir, new FileVisitor<Path>() {
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                log.info("Delete {}", file);
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                log.info("Delete {}", dir);
+                Files.delete(dir);
+                return FileVisitResult.CONTINUE;
+            }
+        });
     }
 }

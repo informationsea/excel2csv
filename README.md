@@ -34,12 +34,12 @@ software. They are licensed by Apache License or GPL3.
 * [Open CSV] - a very simple csv (comma-separated values) parser
   library for Java
 * [Table IO] - Uniformed Table Reader and Writer for CSV, TSV and Excel Files
-* [Apache Commons CLI] - API for parsing command line options passed to programs
+* [Args4j] - API for parsing command line options passed to programs
 
 [Apache POI]: http://poi.apache.org
 [Open CSV]: http://opencsv.sourceforge.net
 [Table IO]: https://github.com/informationsea/tableio
-[Apache Commons CLI]: http://commons.apache.org/proper/commons-cli/
+[Args4j]: http://args4j.kohsuke.org/
 
 Requirements
 ------------
@@ -56,7 +56,7 @@ Install
 Usage
 -----
 
-    usage: excel2csv [options] [INPUT] [OUTPUT]
+    usage: excel2csv [options] [INPUT...] [OUTPUT]
      -A         file type of output file will detect automatically (default)
      -a         file type of input file will detect automatically (default)
      -F         Overwrite sheet if exists

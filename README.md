@@ -1,7 +1,7 @@
 excel2csv
 =========
 
-[![Build Status](https://travis-ci.org/informationsea/excel2csv.svg)](https://travis-ci.org/informationsea/excel2csv)
+<!-- [![Build Status](https://travis-ci.org/informationsea/excel2csv.svg)](https://travis-ci.org/informationsea/excel2csv) -->
 
 xls/xlsx/csv/tsv converter
 
@@ -9,7 +9,7 @@ License
 -------
 
     excel2csv  xls/xlsx/csv/tsv converter
-    Copyright (C) 2014 Yasunobu OKAMURA
+    Copyright (C) 2014-2015 Yasunobu OKAMURA
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ software. They are licensed by Apache License or GPL3.
 Requirements
 ------------
 
-* Java 7 or later
+* Java 8 or later
 
 
 Install

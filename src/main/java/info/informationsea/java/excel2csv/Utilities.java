@@ -163,7 +163,7 @@ public class Utilities {
 
     public static void copyTable(TableReader reader, TableWriter writer) throws Exception {
         for (TableRecord record : reader) {
-            writer.printRecord(record.getContent());
+            writer.printRecord((Object[])record.getContent());
         }
     }
 

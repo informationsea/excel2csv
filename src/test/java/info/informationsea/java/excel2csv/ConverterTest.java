@@ -19,6 +19,7 @@
 package info.informationsea.java.excel2csv;
 
 import info.informationsea.tableio.TableReader;
+import info.informationsea.tableio.TableCell;
 import info.informationsea.tableio.csv.TableCSVReader;
 import info.informationsea.tableio.csv.format.DefaultFormat;
 import info.informationsea.tableio.excel.ExcelSheetReader;
@@ -41,7 +42,7 @@ public class ConverterTest {
 
     private static Path temporaryDirectory;
 
-    private static Map<String, List<Object[]>> reference;
+    private static Map<String, List<TableCell[]>> reference;
 
     @BeforeClass
     public static void beforeClass() throws Exception {

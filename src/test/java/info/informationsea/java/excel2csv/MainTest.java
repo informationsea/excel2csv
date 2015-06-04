@@ -18,8 +18,10 @@
 
 package info.informationsea.java.excel2csv;
 
+import info.informationsea.tableio.TableCell;
 import info.informationsea.tableio.TableReader;
 import info.informationsea.tableio.csv.TableCSVReader;
+import javafx.scene.control.Tab;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.IOUtils;
@@ -43,7 +45,7 @@ public class MainTest {
     private static final String[] suffixList = new String[]{
             "txt", "csv", "xls", "xlsx"
     };
-    private static List<Object[]> expectedData;
+    private static List<TableCell[]> expectedData;
 
     @BeforeClass
     public static void setupClass() throws Exception {
@@ -138,12 +140,12 @@ public class MainTest {
         }
     }
 
-    public static void assertObjects(List<Object[]> obj1, List<Object[]> obj2) {
+    public static void assertObjects(List<TableCell[]> obj1, List<TableCell[]> obj2) {
         Assert.assertEquals(obj1.size(), obj2.size());
 
         for (int i = 0; i < obj1.size(); i++) {
-            Object[] array1 = obj1.get(i);
-            Object[] array2 = obj2.get(i);
+            TableCell[] array1 = obj1.get(i);
+            TableCell[] array2 = obj2.get(i);
             Assert.assertEquals(array1.length, array2.length);
             for (int j = 0; j < array1.length; j++) {
                 String str1 = array1[j].toString();

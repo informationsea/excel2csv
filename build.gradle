@@ -1,5 +1,5 @@
 plugins {
-  id "us.kirchmeier.capsule" version "0.10.0"
+    id "us.kirchmeier.capsule" version "0.10.0"
 }
 
 apply plugin: 'java'
@@ -8,21 +8,22 @@ apply plugin: 'idea'
 apply plugin: 'jacoco'
 
 group = 'info.informationsea.excel2csv'
-version = '0.2.0-SNAPSHOT'
+version = '0.3.0-SNAPSHOT'
 
 mainClassName = 'info.informationsea.java.excel2csv.Main'
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
-     mavenCentral()
+    mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
-    compile 'info.informationsea.tableio:tableio-core:0.0.2'
-    compile 'info.informationsea.tableio:tableio-excel:0.0.2'
-    compile 'info.informationsea.tableio:tableio-csv:0.0.2'
+    compile 'info.informationsea.tableio:tableio-core:0.1.0-SNAPSHOT'
+    compile 'info.informationsea.tableio:tableio-excel:0.1.0-SNAPSHOT'
+    compile 'info.informationsea.tableio:tableio-csv:0.1.0-SNAPSHOT'
     compile 'org.slf4j:slf4j-api:1.7.10'
     compile 'org.slf4j:slf4j-simple:1.7.10'
     compile 'args4j:args4j:2.0.29'
@@ -34,7 +35,7 @@ task fatCapsule(type: FatCapsule) {
     applicationClass mainClassName
 }
 
-task executableCapsule(type:FatCapsule){
+task executableCapsule(type: FatCapsule) {
     applicationClass mainClassName
     reallyExecutable
     archiveName = "excel2csv"

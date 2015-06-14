@@ -8,7 +8,7 @@ apply plugin: 'idea'
 apply plugin: 'jacoco'
 
 group = 'info.informationsea.excel2csv'
-version = '0.3.0'
+version = '0.3.1'
 
 mainClassName = 'info.informationsea.java.excel2csv.Main'
 
@@ -21,9 +21,9 @@ repositories {
 }
 
 dependencies {
-    compile 'info.informationsea.tableio:tableio-core:0.1.0'
-    compile 'info.informationsea.tableio:tableio-excel:0.1.0'
-    compile 'info.informationsea.tableio:tableio-csv:0.1.0'
+    compile 'info.informationsea.tableio:tableio-core:0.1.1'
+    compile 'info.informationsea.tableio:tableio-excel:0.1.1'
+    compile 'info.informationsea.tableio:tableio-csv:0.1.1'
     compile 'org.slf4j:slf4j-api:1.7.10'
     compile 'org.slf4j:slf4j-simple:1.7.10'
     compile 'args4j:args4j:2.0.29'

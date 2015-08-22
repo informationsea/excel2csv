@@ -81,7 +81,7 @@ public class ConverterTest {
         Workbook workbook = WorkbookFactory.create(temporaryOutput.toFile());
         for (String one : new String[]{"iris", "CO2", "DNase"}) {
             try (TableReader reader = new ExcelSheetReader(workbook.getSheet(one + ".csv"))) {
-                MainTest.assertObjects(reference.get(one), reader.readAll());
+                Excel2CSVTest.assertObjects(reference.get(one), reader.readAll());
             }
         }
     }
@@ -98,7 +98,7 @@ public class ConverterTest {
         for (String one : new String[]{"iris", "CO2", "DNase"}) {
             for (String suffix : new String[]{"", "-1"}) {
                 try (TableReader reader = new ExcelSheetReader(workbook.getSheet(one+suffix))) {
-                    MainTest.assertObjects(reference.get(one), reader.readAll());
+                    Excel2CSVTest.assertObjects(reference.get(one), reader.readAll());
                 }
             }
         }
@@ -114,7 +114,7 @@ public class ConverterTest {
         Workbook workbook = WorkbookFactory.create(temporaryOutput.toFile());
         for (String one : new String[]{"iris", "CO2", "DNase"}) {
                 try (TableReader reader = new ExcelSheetReader(workbook.getSheet(one))) {
-                    MainTest.assertObjects(reference.get(one), reader.readAll());
+                    Excel2CSVTest.assertObjects(reference.get(one), reader.readAll());
             }
         }
     }
@@ -131,7 +131,7 @@ public class ConverterTest {
         for (String one : new String[]{"iris"}) {
             log.info("Sheet name: {}", workbook.getSheetName(0));
             try (TableReader reader = new ExcelSheetReader(workbook.getSheet(one))) {
-                MainTest.assertObjects(reference.get(one), reader.readAll());
+                Excel2CSVTest.assertObjects(reference.get(one), reader.readAll());
             }
         }
     }
@@ -147,7 +147,7 @@ public class ConverterTest {
         Assert.assertEquals(1, workbook.getNumberOfSheets());
         for (String one : new String[]{"DNase"}) {
             try (TableReader reader = new ExcelSheetReader(workbook.getSheet(one))) {
-                MainTest.assertObjects(reference.get(one), reader.readAll());
+                Excel2CSVTest.assertObjects(reference.get(one), reader.readAll());
             }
         }
     }
@@ -163,7 +163,7 @@ public class ConverterTest {
         Assert.assertEquals(1, workbook.getNumberOfSheets());
         for (String one : new String[]{"DNase"}) {
             try (TableReader reader = new ExcelSheetReader(workbook.getSheet(one))) {
-                MainTest.assertObjects(reference.get(one), reader.readAll());
+                Excel2CSVTest.assertObjects(reference.get(one), reader.readAll());
             }
         }
     }

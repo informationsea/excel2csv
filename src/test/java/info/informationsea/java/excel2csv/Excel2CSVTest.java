@@ -21,7 +21,6 @@ package info.informationsea.java.excel2csv;
 import info.informationsea.tableio.TableCell;
 import info.informationsea.tableio.TableReader;
 import info.informationsea.tableio.csv.TableCSVReader;
-import javafx.scene.control.Tab;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.IOUtils;
@@ -38,7 +37,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @Slf4j
-public class MainTest {
+public class Excel2CSVTest {
 
     private static Path sampleDirectory;
     private static Path[] sampleInput;
@@ -55,11 +54,11 @@ public class MainTest {
         int i = 0;
         for (String suffix : suffixList) {
             sampleInput[i] = Paths.get(sampleDirectory.toString(), "test."+suffix);
-            copyFile(MainTest.class.getResourceAsStream("iris."+suffix), sampleInput[i]);
+            copyFile(Excel2CSVTest.class.getResourceAsStream("iris."+suffix), sampleInput[i]);
             i++;
         }
 
-        expectedData = new TableCSVReader(new InputStreamReader(MainTest.class.getResourceAsStream("iris.csv"))).readAll();
+        expectedData = new TableCSVReader(new InputStreamReader(Excel2CSVTest.class.getResourceAsStream("iris.csv"))).readAll();
     }
 
     private static void copyFile(InputStream inputStream, Path output) throws IOException {
@@ -80,7 +79,7 @@ public class MainTest {
 
     @Test
     public void testCopyFile() throws Exception {
-        Assert.assertArrayEquals(IOUtils.toByteArray(MainTest.class.getResourceAsStream("iris.txt")),
+        Assert.assertArrayEquals(IOUtils.toByteArray(Excel2CSVTest.class.getResourceAsStream("iris.txt")),
                 IOUtils.toByteArray(new FileInputStream(sampleInput[0].toFile())));
     }
 
@@ -90,7 +89,7 @@ public class MainTest {
             for (String suffix2 : suffixList) {
                 Path outputFile = Files.createTempFile("outputTest", "."+suffix2);
                 log.info("input: {}  / output: {}", input.getFileName().toString(), outputFile.getFileName().toString());
-                new Main().run(new String[]{input.toString(), outputFile.toString()});
+                new Excel2CSV().run(new String[]{input.toString(), outputFile.toString()});
                 try (TableReader tableReader = Utilities.openReader(outputFile.toFile(), 0, null)) {
                     assertObjects(expectedData, tableReader.readAll());
                 }
@@ -101,9 +100,9 @@ public class MainTest {
     @Test
     public void testMultiSheet() throws Exception {
         Path outputFile = Files.createTempFile("outputTest", ".xlsx");
-        new Main().run(new String[]{sampleInput[0].toString(), outputFile.toString()});
-        new Main().run(new String[]{sampleInput[1].toString(), outputFile.toString()});
-        new Main().run(new String[]{sampleInput[0].toString(), outputFile.toString()});
+        new Excel2CSV().run(new String[]{sampleInput[0].toString(), outputFile.toString()});
+        new Excel2CSV().run(new String[]{sampleInput[1].toString(), outputFile.toString()});
+        new Excel2CSV().run(new String[]{sampleInput[0].toString(), outputFile.toString()});
 
         try (FileInputStream inputStream = new FileInputStream(outputFile.toFile())) {
             Workbook workbook = new XSSFWorkbook(inputStream);
@@ -134,7 +133,7 @@ public class MainTest {
     @Test
     public void testNamedSheet() throws Exception {
         Path outputFile = Files.createTempFile("outputTest", ".xlsx");
-        new Main().run(new String[]{"-S", "OK", sampleInput[0].toString(), outputFile.toString()});
+        new Excel2CSV().run(new String[]{"-S", "OK", sampleInput[0].toString(), outputFile.toString()});
         try (TableReader tableReader = Utilities.openReader(outputFile.toFile(), 100, "OK")) {
             assertObjects(expectedData, tableReader.readAll());
         }

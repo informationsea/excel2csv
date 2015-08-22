@@ -5,6 +5,11 @@ excel2csv
 
 xls/xlsx/csv/tsv converter
 
+Download
+--------
+
+Released versions are available at [Release page](https://github.com/informationsea/excel2csv/releases)
+
 License
 -------
 
@@ -87,4 +92,4 @@ How to build
 
     git clone https://github.com/informationsea/excel2csv.git
     cd excel2csv
-    ./gradlew clean distUnix installDist
+    ./gradlew clean build createExecutable nativePackage

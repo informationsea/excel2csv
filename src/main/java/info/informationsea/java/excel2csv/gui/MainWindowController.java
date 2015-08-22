@@ -20,11 +20,13 @@ package info.informationsea.java.excel2csv.gui;
 
 import info.informationsea.java.excel2csv.Converter;
 import info.informationsea.java.excel2csv.Utilities;
+import info.informationsea.java.excel2csv.VersionResolver;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuBar;
 import javafx.scene.input.DragEvent;
@@ -52,10 +54,10 @@ public class MainWindowController implements Initializable {
     private MenuBar menuBar;
 
     @FXML
-    private CheckMenuItem prettyTable;
+    private CheckBox prettyTable;
 
     @FXML
-    private CheckMenuItem convertType;
+    private CheckBox convertType;
 
     private Preferences preferences;
 
@@ -63,7 +65,7 @@ public class MainWindowController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         preferences = Application.getApplicationPreferences();
 
-        prettyTable.setSelected(preferences.getBoolean(PRETTY_TABLE, true));
+        prettyTable.setSelected(preferences.getBoolean(PRETTY_TABLE, false));
         prettyTable.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -76,7 +78,7 @@ public class MainWindowController implements Initializable {
             }
         });
 
-        convertType.setSelected(preferences.getBoolean(CELL_TYPE_CONVERT, true));
+        convertType.setSelected(preferences.getBoolean(CELL_TYPE_CONVERT, false));
         convertType.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -159,7 +161,12 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void onAbout() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Excel2CSV\nVersion: 0.0.1");
+        Alert alert = new Alert(Alert.AlertType.INFORMATION,
+                "Excel2CSV\nVersion: "+ VersionResolver.getVersion() +  "\n" +
+                        "Git Commit: " + VersionResolver.getGitCommit() + "\n" +
+                        "Build Date: " + VersionResolver.getBuildDate() + "\n\n" +
+                        "Webpage: https://github.com/informationsea/excel2csv"
+        );
         alert.setTitle("About Excel2CSV");
         alert.setHeaderText("Excel2CSV");
         alert.showAndWait();

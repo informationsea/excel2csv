@@ -1,28 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.input.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="234.0" prefWidth="308.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="info.informationsea.java.excel2csv.gui.MainWindowController">
+
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="234.0" prefWidth="326.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="info.informationsea.java.excel2csv.gui.MainWindowController">
    <children>
       <MenuBar fx:id="menuBar">
         <menus>
           <Menu mnemonicParsing="false" text="File">
                <items>
-              <MenuItem mnemonicParsing="false" onAction="#onQuit" text="Quit">
+              <MenuItem onAction="#onQuit" text="Quit">
                      <accelerator>
-                        <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                        <KeyCodeCombination alt="UP" code="Q" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                      </accelerator>
                   </MenuItem>
                </items>
           </Menu>
-            <Menu mnemonicParsing="false" text="Configuraiton">
-              <items>
-                  <CheckMenuItem fx:id="prettyTable" mnemonicParsing="false" selected="true" text="Pretty Table" />
-                  <CheckMenuItem fx:id="convertType" mnemonicParsing="false" selected="true" text="Convert Cell Type" />
-              </items>
-            </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#onAbout" text="About" />
@@ -30,13 +28,15 @@
           </Menu>
         </menus>
       </MenuBar>
-      <AnchorPane maxHeight="1.7976931348623157E308" prefHeight="900.0">
+      <AnchorPane maxHeight="1.7976931348623157E308" prefHeight="900.0" prefWidth="326.0">
          <children>
-            <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#clickConvert" onDragDropped="#onDragDropped" onDragOver="#onDragOver" prefHeight="178.0" prefWidth="225.0" text="Click or Drag &amp; Drop Here" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <Button layoutX="14.0" layoutY="70.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#clickConvert" onDragDropped="#onDragDropped" onDragOver="#onDragOver" prefHeight="135.0" prefWidth="326.0" text="Click or Drag &amp; Drop Here" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0">
                <font>
                   <Font size="20.0" />
                </font>
             </Button>
+            <CheckBox fx:id="prettyTable" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="289.0" text="Pretty table (Excel output)" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
+            <CheckBox fx:id="convertType" layoutX="14.0" layoutY="40.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="294.0" text="Suggest cell type from content (Excel output)" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="40.0" />
          </children>
       </AnchorPane>
    </children>

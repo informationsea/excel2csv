@@ -31,7 +31,7 @@ import java.util.List;
 
 
 @Slf4j
-public class Main {
+public class Excel2CSV {
 
     @Option(name = "-a", usage = "Copy all sheets in input excel file")
     private boolean optionCopyAllSheets = false;
@@ -57,11 +57,15 @@ public class Main {
     @Option(name = "-c", usage = "Disable cell types conversion automatically")
     private boolean optionDisableConvertCell = false;
 
+
+    @Option(name = "-v", usage = "Show version")
+    private boolean optionVersion = false;
+
     @Argument
     private List<String> arguments = new ArrayList<String>();
 
     public static void main(String[] argv) {
-        new Main().run(argv);
+        new Excel2CSV().run(argv);
     }
 
     public void run(String[] argv) {
@@ -76,6 +80,14 @@ public class Main {
         if (optionHelp || arguments.size() == 1) {
             System.err.println("excel2csv [options] INPUT... OUTPUT");
             cmdLineParser.printUsage(System.err);
+            return;
+        }
+
+        if (optionVersion) {
+            System.err.println("Excel2CSV\nVersion: "+ VersionResolver.getVersion() +  "\n" +
+                    "Git Commit: " + VersionResolver.getGitCommit() + "\n" +
+                    "Build Date: " + VersionResolver.getBuildDate() + "\n\n" +
+                    "Webpage: https://github.com/informationsea/excel2csv");
             return;
         }
 

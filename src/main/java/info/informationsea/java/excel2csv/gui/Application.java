@@ -37,6 +37,8 @@ public class Application extends javafx.application.Application {
         Scene scene = new Scene(parent);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Excel2csv");
+        primaryStage.setMinWidth(326);
+        primaryStage.setMinHeight(243);
         primaryStage.show();
     }
 

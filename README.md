@@ -1,7 +1,7 @@
 excel2csv
 =========
 
-<!-- [![Build Status](https://travis-ci.org/informationsea/excel2csv.svg)](https://travis-ci.org/informationsea/excel2csv) -->
+[![Build Status](https://travis-ci.org/informationsea/excel2csv.svg)](https://travis-ci.org/informationsea/excel2csv)
 
 xls/xlsx/csv/tsv converter
 

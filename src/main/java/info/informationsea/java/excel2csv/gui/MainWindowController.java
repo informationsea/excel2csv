@@ -126,7 +126,12 @@ public class MainWindowController implements Initializable {
         if (files.size() > 1) {
             fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Excel format", "*.xlsx", "*.xls"));
         } else {
-            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Supported Files", "*.csv", "*.txt", "*.xls", "*.xlsx"));
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Excel Format", "*.xlsx", "*.xls"),
+                    new FileChooser.ExtensionFilter("Classical Excel Format", "*.xls"),
+                    new FileChooser.ExtensionFilter("CSV", "*.csv"),
+                    new FileChooser.ExtensionFilter("Tab delimited text", "*.txt"),
+                    new FileChooser.ExtensionFilter("All Supported Files", "*.csv", "*.txt", "*.xls", "*.xlsx"));
         }
 
         fileChooser.setInitialDirectory(new File(preferences.get(SAVE_DIRECTORY_DEFAULT, System.getProperty("user.home"))));
@@ -196,7 +201,7 @@ public class MainWindowController implements Initializable {
         Dragboard db = event.getDragboard();
         boolean success = false;
         if (db.hasFiles()) {
-            log.info("File dropped {}", db.getFiles());
+            //log.info("File dropped {}", db.getFiles());
             success = true;
         }
         event.setDropCompleted(success);

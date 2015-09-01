@@ -87,7 +87,7 @@ public class Utilities {
         }
     }
 
-    public static TableWriter openWriter(final File outputFile, String sheetName, boolean overWrite, boolean disablePretty) throws IOException {
+    public static TableWriter openWriter(final File outputFile, String sheetName, boolean overWrite, boolean enablePretty) throws IOException {
         if (outputFile == null) {
             return new TableCSVWriter(new OutputStreamWriter(System.out), new TabDelimitedFormat());
         } else {
@@ -108,7 +108,7 @@ public class Utilities {
 
                     Sheet sheet = createUniqueNameSheetForWorkbook(workbook, sheetName, overWrite);
                     final ExcelSheetWriter excelSheetWriter = new ExcelSheetWriter(sheet);
-                    excelSheetWriter.setPrettyTable(!disablePretty);
+                    excelSheetWriter.setPrettyTable(enablePretty);
                     return new AbstractTableWriter() {
                         @Override
                         public void printRecord(Object... values) throws Exception {

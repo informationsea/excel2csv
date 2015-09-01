@@ -21,8 +21,9 @@ package info.informationsea.java.excel2csv;
 import info.informationsea.tableio.TableWriter;
 import info.informationsea.tableio.impl.AbstractTableWriter;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-@AllArgsConstructor
+@AllArgsConstructor @Slf4j
 public class FilteredWriter extends AbstractTableWriter {
 
     private TableWriter writer;

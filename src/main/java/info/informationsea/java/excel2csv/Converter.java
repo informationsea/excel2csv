@@ -26,6 +26,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -36,7 +37,7 @@ import java.io.FileOutputStream;
 import java.util.List;
 
 
-@Builder @Data @NoArgsConstructor @AllArgsConstructor
+@Builder @Data @NoArgsConstructor @AllArgsConstructor @Slf4j
 public class Converter {
     private boolean overwriteSheet = false;
     private boolean copyAllSheets = true;
@@ -123,7 +124,9 @@ public class Converter {
     private void doConvertOne(File inputFile, File outputFile) throws Exception {
         try (TableWriter writer = Utilities.openWriter(outputFile, outputSheetName, overwriteSheet, prettyTable)) {
             try (TableReader reader = Utilities.openReader(inputFile, inputSheetIndex, inputSheetName)) {
-                Utilities.copyTable(reader, writer);
+                try (FilteredWriter writer2 = new FilteredWriter(writer, convertCellTypes)) {
+                    Utilities.copyTable(reader, writer2);
+                }
             }
         }
     }

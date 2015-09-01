@@ -30,7 +30,7 @@
       </MenuBar>
       <AnchorPane maxHeight="1.7976931348623157E308" prefHeight="900.0" prefWidth="326.0">
          <children>
-            <Button layoutX="14.0" layoutY="70.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#clickConvert" onDragDropped="#onDragDropped" onDragOver="#onDragOver" prefHeight="135.0" prefWidth="326.0" text="Click or Drag &amp; Drop Here" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0">
+            <Button defaultButton="true" layoutX="14.0" layoutY="70.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#clickConvert" onDragDropped="#onDragDropped" onDragOver="#onDragOver" prefHeight="135.0" prefWidth="326.0" text="Click or Drag &amp; Drop Here" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0">
                <font>
                   <Font size="20.0" />
                </font>

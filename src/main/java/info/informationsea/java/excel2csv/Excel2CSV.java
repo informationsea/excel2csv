@@ -110,16 +110,17 @@ public class Excel2CSV {
             inputFiles.add(new File(one));
         }
         File outputFile = new File(arguments.get(arguments.size()-1));
-
         try {
-            Converter.builder().
+            Converter converter = Converter.builder().
                     convertCellTypes(!optionDisableConvertCell).
                     copyAllSheets(optionCopyAllSheets).
                     inputSheetIndex(optionSheetIndex).
                     inputSheetName(optionSheetName).
                     outputSheetName(optionOutputSheetName).
                     overwriteSheet(optionOverwrite).
-                    prettyTable(!optionDisablePretty).build().doConvert(inputFiles, outputFile);
+                    prettyTable(!optionDisablePretty).build();
+            //log.info("pretty {}", converter.isPrettyTable());
+            converter.doConvert(inputFiles, outputFile);
         } catch (Exception e) {
             e.printStackTrace();
         }

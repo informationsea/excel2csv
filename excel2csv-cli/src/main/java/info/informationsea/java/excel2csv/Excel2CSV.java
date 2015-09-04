@@ -18,7 +18,6 @@
 
 package info.informationsea.java.excel2csv;
 
-import info.informationsea.java.excel2csv.gui.Application;
 import lombok.extern.slf4j.Slf4j;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
@@ -77,12 +76,6 @@ public class Excel2CSV {
             optionHelp = true;
         }
 
-        if (optionHelp || arguments.size() == 1) {
-            System.err.println("excel2csv [options] INPUT... OUTPUT");
-            cmdLineParser.printUsage(System.err);
-            return;
-        }
-
         if (optionVersion) {
             System.err.println("Excel2CSV\nVersion: "+ VersionResolver.getVersion() +  "\n" +
                     "Git Commit: " + VersionResolver.getGitCommit() + "\n" +
@@ -91,8 +84,9 @@ public class Excel2CSV {
             return;
         }
 
-        if (arguments.size() == 0) {
-            Application.launch(Application.class);
+        if (optionHelp || arguments.size() < 1) {
+            System.err.println("excel2csv [options] INPUT... OUTPUT");
+            cmdLineParser.printUsage(System.err);
             return;
         }
 

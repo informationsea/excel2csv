@@ -48,7 +48,7 @@ public class Application extends javafx.application.Application {
         if (applicationProperties == null) {
             applicationProperties = Preferences.userNodeForPackage(Application.class);
         }
-        log.info("Preferences {}", applicationProperties);
+        Application.log.info("Preferences {}", applicationProperties);
         return applicationProperties;
     }
 }

@@ -1,0 +1,48 @@
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'jacoco'
+
+mainClassName = 'info.informationsea.java.excel2csv.Excel2CSV'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+
+dependencies {
+    compile 'info.informationsea.tableio:tableio-core:0.1.2'
+    compile 'info.informationsea.tableio:tableio-excel:0.1.2'
+    compile 'info.informationsea.tableio:tableio-csv:0.1.2'
+    compile 'org.slf4j:slf4j-api:1.7.10'
+    compile 'org.slf4j:slf4j-simple:1.7.10'
+    compile 'args4j:args4j:2.0.29'
+    compile 'org.projectlombok:lombok:1.16.2'
+    testCompile 'junit:junit:4.12'
+}
+
+
+def executableBaseName = "excel2csv"
+
+
+task executableJar(type: Jar, dependsOn: jar)  {
+    archiveName = "${executableBaseName}.jar"
+    manifest {
+        attributes 'Main-Class' : mainClassName
+    }
+
+    from configurations.compile.collect {it.isDirectory() ? it : zipTree(it)}
+    from "$buildDir/classes/main"
+    from "$buildDir/resources/main"
+}
+
+task createExecutable(dependsOn: executableJar) << {
+    def executableFile = file("$buildDir/deploy/excel2csv")
+    executableFile.parentFile.mkdirs()
+
+    def output = new FileOutputStream(executableFile)
+    output.write(("#!/bin/sh\n" +
+            "\n" +
+            "exec java -jar \$0 \"\$@\"\n").bytes)
+    output.write file("$libsDir/${executableBaseName}.jar").bytes
+    output.close()
+    executableFile.executable = true
+}

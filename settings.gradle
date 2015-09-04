@@ -1,1 +1,4 @@
 rootProject.name = 'excel2csv'
+include 'excel2csv-cli'
+include 'excel2csv-gui'
+

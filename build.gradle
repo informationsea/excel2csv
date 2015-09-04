@@ -1,99 +1,39 @@
-plugins {
-    id "us.kirchmeier.capsule" version "0.10.0"
-}
+subprojects {
 
-apply plugin: 'java'
-apply plugin: 'application'
-apply plugin: 'idea'
-apply plugin: 'jacoco'
+    apply plugin: 'java'
+    apply plugin: 'jacoco'
 
-group = 'info.informationsea.excel2csv'
-version = '0.4.0'
+    group = 'info.informationsea.excel2csv'
+    version = '0.4.0'
 
-mainClassName = 'info.informationsea.java.excel2csv.Excel2CSV'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-    mavenLocal()
-}
-
-dependencies {
-    compile 'info.informationsea.tableio:tableio-core:0.1.1'
-    compile 'info.informationsea.tableio:tableio-excel:0.1.1'
-    compile 'info.informationsea.tableio:tableio-csv:0.1.1'
-    compile 'org.slf4j:slf4j-api:1.7.10'
-    compile 'org.slf4j:slf4j-simple:1.7.10'
-    compile 'args4j:args4j:2.0.29'
-    compile 'org.projectlombok:lombok:1.16.2'
-    testCompile 'junit:junit:4.12'
-}
-
-jar {
-    manifest {
-        attributes 'Main-Class' : mainClassName
+    repositories {
+        mavenCentral()
     }
-    from configurations.compile.collect {it.isDirectory() ? it : zipTree(it)}
-}
-
-task nativePackage(dependsOn: jar) << {
-    file("$buildDir/deploy").mkdirs()
-
-    exec {
-        executable System.getProperty("java.home")+"/../bin/javapackager"
-        args "-deploy", "-title", "${project.name}", "-name", project.name, "-appclass", mainClassName,
-                "-native", "installer", "-outdir", "$buildDir/deploy", "-outfile", project.name,
-                "-srcdir", "$buildDir/libs", "-srcfiles", "${project.name}-${project.version}.jar"
-    }
-
-}
-
-task createExecutable(dependsOn: jar) << {
-    def executableFile = file("$buildDir/deploy/excel2csv")
-    executableFile.parentFile.mkdirs()
-
-    def output = new FileOutputStream(executableFile)
-    output.write(("#!/bin/sh\n" +
-            "\n" +
-            "exec java -jar \$0 \"\$@\"\n").bytes)
-    output.write file("$buildDir/libs/${project.name}-${project.version}.jar").bytes
-    output.close()
-    executableFile.executable = true
-}
-
-sourceSets {
-    main {
-        resources {
-            srcDirs = ['src/main/resources', "$buildDir/version"]
+    sourceSets {
+        main {
+            resources {
+                srcDirs = ['src/main/resources', "$buildDir/version"]
+            }
         }
     }
-}
 
-def versionInfoFile = file("$buildDir/version/META-INF/excel2csv/version.properties")
+    def versionInfoFile = file("$buildDir/version/META-INF/excel2csv/version.properties")
 
-task createGitInfoFile(type:Exec) {
-    commandLine "git", "log", "-n1", "--format=%h"
-    standardOutput = new ByteArrayOutputStream();
-    doLast {
-        versionInfoFile.parentFile.mkdirs()
-        def outputString = standardOutput.toString().trim()
-        if (outputString.length() > 0)
-            versionInfoFile.text = "git.commit=" + standardOutput.toString().trim() + "\nversion=" + version + "\nbuild.date=" + new Date().toString()
-        else
-            versionInfoFile.text = "git.commit=UNKNOWN\nversion=" + version + "\nbuild.date=" + new Date().toString()
+    task createGitInfoFile(type:Exec) {
+        commandLine "git", "log", "-n1", "--format=%h"
+        standardOutput = new ByteArrayOutputStream();
+        doLast {
+            versionInfoFile.parentFile.mkdirs()
+            def outputString = standardOutput.toString().trim()
+            if (outputString.length() > 0)
+                versionInfoFile.text = "git.commit=" + standardOutput.toString().trim() + "\nversion=" + version + "\nbuild.date=" + new Date().toString()
+            else
+                versionInfoFile.text = "git.commit=UNKNOWN\nversion=" + version + "\nbuild.date=" + new Date().toString()
+        }
     }
-}
 
-processResources.dependsOn.add(createGitInfoFile)
-
-/*
-task distUnix(dependsOn: executableCapsule, type: Tar) {
-    from "$buildDir/libs/excel2csv"
-    from "$projectDir/README.md"
-    from "$projectDir/LICENSE"
+    processResources.dependsOn.add(createGitInfoFile)
 }
-*/
 
 

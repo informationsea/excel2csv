@@ -27,7 +27,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuBar;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -104,9 +103,12 @@ public class MainWindowController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open files to convert");
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Supported Files", "*.csv", "*.txt", "*.xls", "*.xlsx"));
-        fileChooser.setInitialDirectory(new File(preferences.get(OPEN_DIRECTORY_DEFAULT, System.getProperty("user.home"))));
+        File path = new File(preferences.get(OPEN_DIRECTORY_DEFAULT, System.getProperty("user.home")));
+        if (path.exists()) {
+            fileChooser.setInitialDirectory(path);
+        }
         List<File> selected = fileChooser.showOpenMultipleDialog(stage);
-        log.info("Selected Files {}", selected);
+        MainWindowController.log.info("Selected Files {}", selected);
         if (selected == null)
             return;
 

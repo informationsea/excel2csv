@@ -1,0 +1,35 @@
+apply plugin: 'application'
+
+mainClassName = "info.informationsea.java.excel2csv.gui.Application"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile project(":excel2csv-cli")
+}
+
+
+def executableBaseName = "excel2csv-gui"
+
+task executableJar(type: Jar, dependsOn: jar)  {
+    archiveName = "${executableBaseName}.jar"
+    manifest {
+        attributes 'Main-Class' : mainClassName
+    }
+
+    from configurations.compile.collect {it.isDirectory() ? it : zipTree(it)}
+    from "$buildDir/classes/main"
+    from "$buildDir/resources/main"
+}
+
+task nativePackage(dependsOn: executableJar) << {
+    file("$buildDir/deploy").mkdirs()
+
+    exec {
+        executable System.getProperty("java.home")+"/../bin/javapackager"
+        args "-deploy", "-title", "${project.name}", "-name", project.name, "-appclass", mainClassName,
+                "-native", "installer", "-outdir", "$buildDir/deploy", "-outfile", project.name,
+                "-srcdir", "$libsDir", "-srcfiles", "${executableBaseName}.jar"
+    }
+}

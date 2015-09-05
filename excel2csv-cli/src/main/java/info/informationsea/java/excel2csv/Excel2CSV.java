@@ -56,6 +56,8 @@ public class Excel2CSV {
     @Option(name = "-c", usage = "Disable cell types conversion automatically")
     private boolean optionDisableConvertCell = false;
 
+    @Option(name = "-l", usage = "Streaming excel output mode (useful for large data)")
+    private boolean optionLargetExcel = false;
 
     @Option(name = "-v", usage = "Show version")
     private boolean optionVersion = false;
@@ -112,6 +114,7 @@ public class Excel2CSV {
                     inputSheetName(optionSheetName).
                     outputSheetName(optionOutputSheetName).
                     overwriteSheet(optionOverwrite).
+                    largeExcelMode(optionLargetExcel).
                     prettyTable(!optionDisablePretty).build();
             //log.info("pretty {}", converter.isPrettyTable());
             converter.doConvert(inputFiles, outputFile);

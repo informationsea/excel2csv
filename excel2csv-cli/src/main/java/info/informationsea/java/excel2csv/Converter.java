@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
@@ -47,6 +48,7 @@ public class Converter {
 
     private boolean prettyTable = true;
     private boolean convertCellTypes = true;
+    private boolean largeExcelMode = true;
 
     public void doConvert(List<File> inputFiles, File outputFile) throws Exception {
         if (copyAllSheets || inputFiles.size() > 1) {
@@ -81,12 +83,20 @@ public class Converter {
                     workbook = new HSSFWorkbook();
                     break;
                 case FILETYPE_XLSX:
-                    workbook = new XSSFWorkbook();
+                    if (largeExcelMode)
+                        workbook = new SXSSFWorkbook();
+                    else
+                        workbook = new XSSFWorkbook();
                     break;
                 default:
                     throw new IllegalArgumentException("Output file format should be Excel format");
             }
         }
+
+        if (largeExcelMode && !(workbook instanceof SXSSFWorkbook)) {
+            log.warn("Streaming output mode is disabled");
+        }
+        //log.info("workbook: {}", workbook.getClass());
 
         for (File oneInput : inputFiles) {
             switch (Utilities.suggestFileTypeFromName(oneInput.getName())) {
@@ -122,11 +132,10 @@ public class Converter {
     }
 
     private void doConvertOne(File inputFile, File outputFile) throws Exception {
-        try (TableWriter writer = Utilities.openWriter(outputFile, outputSheetName, overwriteSheet, prettyTable)) {
+        try (TableWriter writer = Utilities.openWriter(outputFile, outputSheetName, overwriteSheet, prettyTable, largeExcelMode)) {
             try (TableReader reader = Utilities.openReader(inputFile, inputSheetIndex, inputSheetName)) {
-                try (FilteredWriter writer2 = new FilteredWriter(writer, convertCellTypes)) {
-                    Utilities.copyTable(reader, writer2);
-                }
+                FilteredWriter writer2 = new FilteredWriter(writer, convertCellTypes);
+                Utilities.copyTable(reader, writer2);
             }
         }
     }

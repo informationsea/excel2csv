@@ -32,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
@@ -87,7 +88,7 @@ public class Utilities {
         }
     }
 
-    public static TableWriter openWriter(final File outputFile, String sheetName, boolean overWrite, boolean enablePretty) throws IOException {
+    public static TableWriter openWriter(final File outputFile, String sheetName, boolean overWrite, boolean enablePretty, boolean largeExcelMode) throws IOException {
         if (outputFile == null) {
             return new TableCSVWriter(new OutputStreamWriter(System.out), new TabDelimitedFormat());
         } else {
@@ -101,9 +102,20 @@ public class Utilities {
                             workbook = new XSSFWorkbook(new FileInputStream(outputFile));
                         else workbook = new HSSFWorkbook(new FileInputStream(outputFile));
                     } else {
-                        if (type == FileType.FILETYPE_XLSX)
-                            workbook = new XSSFWorkbook();
-                        else workbook = new HSSFWorkbook();
+                        if (type == FileType.FILETYPE_XLSX) {
+                            if (largeExcelMode)
+                                workbook = new SXSSFWorkbook();
+                            else
+                                workbook = new XSSFWorkbook();
+                        } else {
+                            workbook = new HSSFWorkbook();
+                        }
+                    }
+
+                    //log.info("workbook: {}", workbook.getClass());
+
+                    if (largeExcelMode && !(workbook instanceof SXSSFWorkbook)) {
+                        log.warn("Streaming output mode is disabled");
                     }
 
                     Sheet sheet = createUniqueNameSheetForWorkbook(workbook, sheetName, overWrite);

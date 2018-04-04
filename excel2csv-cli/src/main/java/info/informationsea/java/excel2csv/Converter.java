@@ -102,7 +102,7 @@ public class Converter {
             switch (Utilities.suggestFileTypeFromName(oneInput.getName())) {
                 case FILETYPE_XLSX:
                 case FILETYPE_XLS: {
-                    Workbook inputWorkbook = WorkbookFactory.create(oneInput);
+                    Workbook inputWorkbook = WorkbookFactory.create(oneInput, null, true);
                     int sheetNum = inputWorkbook.getNumberOfSheets();
                     for (int i = 0; i < sheetNum; i++) {
                         try (TableReader reader = new ExcelSheetReader(inputWorkbook.getSheetAt(i))) {
@@ -113,6 +113,7 @@ public class Converter {
                             }
                         }
                     }
+                    inputWorkbook.close();
                     break;
                 }
                 default: {
@@ -128,7 +129,11 @@ public class Converter {
             }
         }
 
-        workbook.write(new FileOutputStream(outputFile));
+        try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+            workbook.write(fos);
+        }
+
+        workbook.close();
     }
 
     private void doConvertOne(File inputFile, File outputFile) throws Exception {

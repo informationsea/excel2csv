@@ -54,7 +54,9 @@ public class Excel2CSVTest {
         int i = 0;
         for (String suffix : suffixList) {
             sampleInput[i] = Paths.get(sampleDirectory.toString(), "test."+suffix);
-            copyFile(Excel2CSVTest.class.getResourceAsStream("iris."+suffix), sampleInput[i]);
+            try (InputStream is = Excel2CSVTest.class.getResourceAsStream("iris."+suffix)) {
+                copyFile(is, sampleInput[i]);
+            }
             i++;
         }
 
@@ -79,8 +81,10 @@ public class Excel2CSVTest {
 
     @Test
     public void testCopyFile() throws Exception {
-        Assert.assertArrayEquals(IOUtils.toByteArray(Excel2CSVTest.class.getResourceAsStream("iris.txt")),
-                IOUtils.toByteArray(new FileInputStream(sampleInput[0].toFile())));
+        try (InputStream is = new FileInputStream(sampleInput[0].toFile())) {
+            Assert.assertArrayEquals(IOUtils.toByteArray(Excel2CSVTest.class.getResourceAsStream("iris.txt")),
+                    IOUtils.toByteArray(is));
+        }
     }
 
     @Test

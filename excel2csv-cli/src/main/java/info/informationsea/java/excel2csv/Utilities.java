@@ -80,10 +80,10 @@ public class Utilities {
                         return new ExcelSheetReader(workbook.getSheetAt(sheetIndex));
                 }
                 case FILETYPE_CSV:
-                    return new TableCSVReader(new FileReader(inputFile), new DefaultFormat());
+                    return new TableCSVReader(new InputStreamReader(new FileInputStream(inputFile), "UTF-8"), new DefaultFormat());
                 case FILETYPE_TAB:
                 default:
-                    return new TableCSVReader(new FileReader(inputFile), new TabDelimitedFormat());
+                    return new TableCSVReader(new InputStreamReader(new FileInputStream(inputFile), "UTF-8"), new TabDelimitedFormat());
             }
         }
     }

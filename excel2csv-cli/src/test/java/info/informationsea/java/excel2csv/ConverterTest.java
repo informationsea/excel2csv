@@ -27,10 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.util.IOUtils;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -84,6 +81,7 @@ public class ConverterTest {
                 Excel2CSVTest.assertObjects(reference.get(one), reader.readAll());
             }
         }
+        workbook.close();
     }
 
     @Test
@@ -102,6 +100,7 @@ public class ConverterTest {
                 }
             }
         }
+        workbook.close();
     }
 
     @Test
@@ -117,6 +116,7 @@ public class ConverterTest {
                     Excel2CSVTest.assertObjects(reference.get(one), reader.readAll());
             }
         }
+        workbook.close();
     }
 
     @Test
@@ -134,6 +134,7 @@ public class ConverterTest {
                 Excel2CSVTest.assertObjects(reference.get(one), reader.readAll());
             }
         }
+        workbook.close();
     }
 
     @Test
@@ -150,6 +151,7 @@ public class ConverterTest {
                 Excel2CSVTest.assertObjects(reference.get(one), reader.readAll());
             }
         }
+        workbook.close();
     }
 
     @Test
@@ -166,5 +168,6 @@ public class ConverterTest {
                 Excel2CSVTest.assertObjects(reference.get(one), reader.readAll());
             }
         }
+        workbook.close();
     }
 }

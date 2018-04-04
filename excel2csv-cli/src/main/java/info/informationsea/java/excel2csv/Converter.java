@@ -130,6 +130,7 @@ public class Converter {
         }
 
         try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+            workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
             workbook.write(fos);
         }
 
